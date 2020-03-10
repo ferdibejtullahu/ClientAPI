@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express();
-const clienti = require('../models/crmModels');
+const clienti = require('../models/clientModel');
+const clientController = require('../controllers/clientController')
 
 router.use(express.json());
 
@@ -8,17 +9,15 @@ router.get('/', (req, res) => {
     res.send(clienti);
 });
 
-router.get('/client/:id', (req, res) =>{
-
-
-    const client = clienti.find(c => c.id === parseInt(req.params.id));
+router.get('/:id', (req, res) =>{
+    const client  = clientController.getById(req.params.id)
     if(!client){
         res.status(404).send('Nuk eshte gjendur asnje klient me ID e dhene');
     }
     res.send(client);
 });
 
-router.post('/client', (req, res) => {
+router.post('/', (req, res) => {
     const klient = {
         id: clienti.length + 1,
         name : req.body.name,
@@ -26,11 +25,11 @@ router.post('/client', (req, res) => {
         city : req.body.city,
         state : req.body.state
     }
-    clienti.push(klient);
-    res.send(klient);
+    const result = clientController.create(klient);
+    res.send(result);
 });
 
-router.put('/client/:id' , (req, res) => {
+router.put('/:id' , (req, res) => {
     const client = clienti.find(c => c.id === parseInt(req.params.id));
     if(!client){
         res.status(404).send(' Nuk eshte gjetur klienti me Id e dhene');
@@ -44,7 +43,7 @@ router.put('/client/:id' , (req, res) => {
     res.send(client);
 });
 
-router.delete('/client/:id' , (req,res) => {
+router.delete('/:id' , (req,res) => {
     const client = clienti.find(c => c.id === parseInt(req.params.id));
     if(!client){
         res.status(404).send('Nuk eshte gjetur klienti me ID e dhene'); 
